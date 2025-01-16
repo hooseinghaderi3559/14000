@@ -1,26 +1,66 @@
-CREATE TABLE Products (
-    ProductID INT PRIMARY KEY AUTO_INCREMENT,
-    ProductName VARCHAR("100") NOT NULL,
-    Category VARCHAR("50")
-    Price DECIMAL("10,2") NOT NULL,
-    Stock INT DEFAULT 0
+
+CREATE DATABASE CommitteeDB;
+
+
+USE CommitteeDB;
+
+
+CREATE TABLE Committees (
+    CommitteeID INT PRIMARY KEY,
+    CommitteeName VARCHAR(100),
+    Description TEXT
 );
-INSERT INTO Products (ProductName, Category, Price, Stock)
-VALUES 
-('Laptop', 'Electronics', 1200.50, 10),
-('Smartphone', 'Electronics', 750.00, 25),
-('Headphones', 'Accessories', 50.75, 100),
-('Desk Chair', 'Furniture', 85.00, 15),
-('Notebook', 'Stationery', 2.50, 200);
-SELECT * FROM Products;
-SELECT ProductName, Price 
-FROM Products
-WHERE Price > 100;
-SELECT ProductName, Stock 
-FROM Products
-WHERE Stock < 20;
-UPDATE Products
-SET Price = 1300.00
-WHERE ProductName = 'Laptop';
-DELETE FROM Products
-WHERE ProductName = 'Notebook';
+
+
+CREATE TABLE Members (
+    MemberID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100),
+    CommitteeID INT,
+    FOREIGN KEY (CommitteeID) REFERENCES Committees(CommitteeID)
+);
+
+
+CREATE TABLE Meetings (
+    MeetingID INT PRIMARY KEY,
+    CommitteeID INT,
+    MeetingDate DATE,
+    MeetingTime TIME,
+    Location VARCHAR(100),
+    Agenda TEXT,
+    FOREIGN KEY (CommitteeID) REFERENCES Committees(CommitteeID)
+);
+
+
+INSERT INTO Committees (CommitteeID, CommitteeName, Description)
+VALUES
+(1, 'Finance Committee', 'Responsible for managing the financial activities.'),
+(2, 'HR Committee', 'Handles human resources and staff-related matters.'),
+(3, 'Event Planning Committee', 'Organizes and plans events.');
+
+
+INSERT INTO Members (MemberID, FirstName, LastName, Email, CommitteeID)
+VALUES
+(1, 'Anna', 'Smith', 'anna.smith@example.com', 1),
+(2, 'John', 'Doe', 'john.doe@example.com', 2),
+(3, 'Jane', 'Doe', 'jane.doe@example.com', 3),
+(4, 'Alice', 'Johnson', 'alice.johnson@example.com', 1),
+(5, 'Bob', 'Brown', 'bob.brown@example.com', 3);
+
+
+INSERT INTO Meetings (MeetingID, CommitteeID, MeetingDate, MeetingTime, Location, Agenda)
+VALUES
+(1, 1, '2025-01-20', '10:00:00', 'Conference Room A', 'Budget review.'),
+(2, 2, '2025-01-21', '11:00:00', 'Conference Room B', 'Staff evaluations.'),
+(3, 3, '2025-01-22', '14:00:00', 'Conference Room C', 'Event planning for Q1.');
+
+
+SELECT c.CommitteeName, m.FirstName, m.LastName, m.Email
+FROM Committees c
+JOIN Members m ON c.CommitteeID = m.CommitteeID;
+
+
+SELECT c.CommitteeName, me.MeetingDate, me.MeetingTime, me.Location, me.Agenda
+FROM Committees c
+JOIN Meetings me ON c.CommitteeID = me.CommitteeID;
